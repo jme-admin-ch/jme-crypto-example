@@ -35,7 +35,7 @@ class KeyParameterParserTest {
     }
 
     // This is a random RSA-4096 test key generated and exported from vault
-    private final static String TEST_KEY = """
+    private static final String TEST_KEY = """
             -----BEGIN RSA PRIVATE KEY-----
             MIIJKgIBAAKCAgEAzai8s/gSFMZE8SCdecjyOp2TeQCuVwSuw3Zm7DmG7dcvMO6Z
             2Pao5Q1B6gXRG4HdxUDJPJbzEpAWuv+aa1Gxi5AnJT/rlO2SWsABKX/SdhR2Ynbj

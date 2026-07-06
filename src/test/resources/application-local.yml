@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/jme-crypto-db-local"
+
+jeap:
+  messaging:
+    kafka:
+      bootstrapServers: "http://localhost:10000"
+      schemaRegistryUrl: "http://localhost:11000"
+  vault:
+    url: http://localhost:8200
+
+jme:
+  crypto:
+    objectstorage:
+      connection:
+        access-url: http://localhost:9000

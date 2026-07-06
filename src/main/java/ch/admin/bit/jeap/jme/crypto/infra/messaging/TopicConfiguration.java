@@ -14,6 +14,7 @@ import org.springframework.kafka.core.KafkaAdmin;
 
 import java.util.List;
 
+@SuppressWarnings("java:S1118") // Suppress SonarLint warning about utility class with no public constructor
 @Configuration
 class TopicConfiguration {
 

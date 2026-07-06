@@ -2,8 +2,6 @@ server:
   servlet:
     context-path: /${spring.application.name}
   port: 8080
-  error:
-    include-stacktrace: always
 
 management:
   server:
@@ -43,16 +41,11 @@ spring:
     hikari:
       schema: ${spring.jpa.properties.hibernate.default_schema}
   flyway:
-    locations: classpath:db/migration
     # Flyway creates automatically the default schema if not exists
     default-schema: ${spring.jpa.properties.hibernate.default_schema}
 
   application:
     name: jme-crypto-service
-
-database-migration:
-  init-container: false
-  startup-migrate-mode-enabled: true
 
 jme:
   crypto:

@@ -4,8 +4,8 @@ import ch.admin.bit.jeap.jme.crypto.api.EscrowDecryptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.interfaces.RSAPrivateKey;
@@ -18,10 +18,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @RestController
 @RequestMapping("/api/escrow")
 @Slf4j
+@RequiredArgsConstructor
 public class EscrowRestController {
 
-    @Autowired
-    private EscrowDecryptionService escrowDecryptionService;
+    private final EscrowDecryptionService escrowDecryptionService;
 
     @Operation(
             summary = """

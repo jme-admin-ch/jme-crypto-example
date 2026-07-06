@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Make sure vault is started
-while ! nc -z vault-server 8200 ; do sleep 1 ; done
+while ! nc -z vault 8200 ; do sleep 1 ; done
 
 set -exo pipefail
 
@@ -10,7 +10,7 @@ unset HTTP_PROXY
 unset http_proxy
 unset https_proxy
 
-export VAULT_ADDR=http://vault-server:8200
+export VAULT_ADDR=http://vault:8200
 
 vault login secret
 
@@ -30,7 +30,7 @@ vault auth enable -path=approle/jme approle
 
 # Create policy 'jme-crypto-service-policy' for the approle with path restriction
 SCRIPT_DIR=`dirname $0`
-vault policy write jme-crypto-service-policy ${SCRIPT_DIR}/jme-cryptop-service-vault-pol.hcl
+vault policy write jme-crypto-service-policy ${SCRIPT_DIR}/jme-crypto-service-vault-pol.hcl
 
 # Create approle for jme-crypto-service-approle, assign the jme-crypto-service-policy
 APPROLE_PATH=auth/approle/jme/role/jme-crypto-service-approle
@@ -52,9 +52,3 @@ SECRET_ID=1234-5678-9012-3456
 vault write ${APPROLE_PATH}/custom-secret-id \
   role_name=jme-crypto-service-approle \
   secret_id="${SECRET_ID}"
-
-
-# Get app-id and generate new secret-id for app-role
-vault list auth/approle/jme/role
-vault read auth/approle/jme/role/jme-crypto-service/role-id
-#vault write -f auth/approle/jme/role/jme-crypto-service/secret-id

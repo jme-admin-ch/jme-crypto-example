@@ -7,7 +7,7 @@ spring:
       authentication: TOKEN
       token: secret
   datasource:
-    url: "jdbc:postgresql://localhost:5432/jme-crypto-db-local"
+    url: "jdbc:postgresql://jme-crypto-db-local:5432/jme-crypto-db-local"
     username: postgres
     password: secret
 
@@ -15,20 +15,20 @@ jme:
   crypto:
     objectstorage:
       connection:
-        access-url: http://localhost:9000
+        access-url: http://minio:9000
         access-key: local
         secret-key: localsecret
 jeap:
   messaging:
     kafka:
-      bootstrapServers: "http://localhost:10000"
-      schemaRegistryUrl: "http://localhost:11000"
+      bootstrapServers: "jme-crypto-broker:29092"
+      schemaRegistryUrl: "http://jme-crypto-schema-registry:8081"
       username: user
       password: user-secret
       securityProtocol: SASL_PLAINTEXT
       set-compatibility-mode-none: true
   vault:
-    url: http://localhost:8200
+    url: http://vault:8200
     authentication: TOKEN
     app-role:
       role-id: 9999-8888-7777

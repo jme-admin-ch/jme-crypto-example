@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JmeCryptoApplication (disable encryption)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local-disable-encryption" />
+    <module name="jme-crypto-example" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ch.admin.bit.jeap.jme.crypto.JmeCryptoApplication" />
+    <option name="VM_PARAMETERS" value="-Dspring.cloud.vault.authentication=token" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="ch.admin.bit.jeap.jme.crypto.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

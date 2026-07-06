@@ -1,0 +1,25 @@
+spring:
+  docker:
+    compose:
+      host: 172.18.0.1
+      file:
+        - docker/docker-compose.yml
+        - docker/docker-compose-ci.yml
+      start:
+        log-level: debug
+  datasource:
+    url: "jdbc:postgresql://jme-crypto-db-local:5432/jme-crypto-db-local"
+
+jeap:
+  messaging:
+    kafka:
+      bootstrapServers: "jme-crypto-broker:29092"
+      schemaRegistryUrl: "http://jme-crypto-schema-registry:8081"
+  vault:
+    url: http://vault:8200
+
+jme:
+  crypto:
+    objectstorage:
+      connection:
+        access-url: http://minio:9000

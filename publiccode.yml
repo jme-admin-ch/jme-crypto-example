@@ -1,0 +1,37 @@
+publiccodeYmlVersion: 0.4.0
+name: jme-crypto-example
+applicationSuite: JME
+softwareVersion: 1.0.0
+releaseDate: 2026-07-08
+url: "https://github.com/jme-admin-ch/jme-crypto-example.git"
+landingURL: "https://github.com/jme-admin-ch/jme"
+platforms:
+  - web
+categories:
+  - application-development
+developmentStatus: stable
+softwareType: standalone/backend
+organisation:
+  uri: https://ld.admin.ch/office/V.1.7
+  name: Federal Office of Information Technology, Systems and Telecommunication
+description:
+  en:
+    localisedName: jme-crypto-example
+    shortDescription: Example project demonstrating how to use the jEAP Crypto Library.
+    longDescription: >
+      This example project provides a comprehensive guide on how to utilize the jEAP Crypto Library 
+      within your applications. It covers setup, configuration, and usage scenarios to help developers 
+      quickly get started and leverage the full capabilities of the library.
+    features:
+      - Demonstrates the jEAP Crypto Library and its features
+legal:
+  license: Apache-2.0
+maintenance:
+  type: internal
+  contacts:
+    - name: Federal Office of Information Technology, Systems and Telecommunication FOITT
+      email: jeap-community@bit.admin.ch
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - en

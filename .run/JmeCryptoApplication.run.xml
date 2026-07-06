@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-    <option name="ACTIVE_PROFILES" value="local"/>
+  <configuration default="false" name="JmeCryptoApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local" />
     <module name="jme-crypto-example" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="ch.admin.bit.jeap.jme.crypto.Application" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ch.admin.bit.jeap.jme.crypto.JmeCryptoApplication" />
     <option name="VM_PARAMETERS" value="-Dspring.cloud.vault.authentication=token" />
     <extension name="coverage">
       <pattern>

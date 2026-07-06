@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.security.interfaces.RSAPrivateKey;
 
+@UtilityClass
 class KeyParameterParser {
 
     @SneakyThrows

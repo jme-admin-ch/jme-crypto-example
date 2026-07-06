@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: jme-crypto-service
+  main:
+    banner-mode: off
+  docker:
+    compose:
+      enabled: true
+      file: docker/docker-compose.yml
+      lifecycle-management: start-and-stop
+      skip:
+        in-tests: false
+      arguments:
+        - "--project-name=${COMPOSE_PROJECT_NAME:jme-crypto-service}"
+      readiness:
+        timeout: 120s
+
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: secret
+    hikari:
+      schema: ${spring.jpa.properties.hibernate.default_schema}
+
+  flyway:
+    default-schema: data
+
+  jpa:
+    database: postgresql
+    show-sql: false
+    generate-ddl: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: data
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  config:
+    import: "classpath:crypto-vault-config.yml"
+  cloud:
+    vault:
+      enabled: true
+      authentication: TOKEN
+      token: secret
+
+jme:
+  crypto:
+    objectstorage:
+      connection:
+        access-key: local
+        secret-key: localsecret
+jeap:
+  web:
+    tls:
+      enabled: false
+  crypto:
+    db:
+      key-id: "gameDatabase"
+  messaging:
+    kafka:
+      bootstrapServers: "http://localhost:10000"
+      schemaRegistryUrl: "http://localhost:11000"
+      username: user
+      password: user-secret
+      securityProtocol: SASL_PLAINTEXT
+      set-compatibility-mode-none: true
+      errorTopicName: jme-messageprocessing-failed
+      systemName: JME
+      serviceName: ${spring.application.name}
+
+  vault:
+    system-name: jme
+    authentication: TOKEN
+    app-role:
+      role-id: 9999-8888-7777
+      secret-id: 1234-5678-9012-3456

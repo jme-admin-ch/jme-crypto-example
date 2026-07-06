@@ -10,10 +10,10 @@ import org.springframework.core.env.Environment;
 @SpringBootApplication
 @EnableConfigurationProperties(S3ObjectStorageConnectionProperties.class)
 @Slf4j
-public class Application {
+public class JmeCryptoApplication {
 
-    public static void main(String[] args) {
-        Environment env = SpringApplication.run(Application.class, args).getEnvironment();
+    static void main(String[] args) {
+        Environment env = SpringApplication.run(JmeCryptoApplication.class, args).getEnvironment();
 
         log.info("""
 

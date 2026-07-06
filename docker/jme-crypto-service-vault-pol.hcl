@@ -8,28 +8,42 @@ path "transit/jme/*" {
 }
 
 # Read-only permission on secrets for jme-crypto-service
-path "bit-jme-d/jme-crypto-service" {
+path "secret/data/jme/jme-crypto-service" {
   capabilities = [
     "read"
   ]
 }
 
 # Read-only permission on profile specific secrets for jme-crypto-service
-path "bit-jme-d/jme-crypto-service/*" {
+path "secret/data/jme/jme-crypto-service/*" {
+  capabilities = [
+    "read"
+  ]
+}
+
+# Read-only permission on shared secrets of the system jme
+path "secret/data/jme/shared" {
+  capabilities = [
+    "read"
+  ]
+}
+
+# Read-only permission on profile specific shared secrets of the system jme
+path "secret/data/jme/shared/*" {
   capabilities = [
     "read"
   ]
 }
 
 # Read-only permission on shared secrets of the system jeap
-path "bit-jme-d/shared" {
+path "secret/data/jeap/shared" {
   capabilities = [
     "read"
   ]
 }
 
 # Read-only permission on profile specific shared secrets of the system jeap
-path "bit-jme-d/shared/*" {
+path "secret/data/jeap/shared/*" {
   capabilities = [
     "read"
   ]

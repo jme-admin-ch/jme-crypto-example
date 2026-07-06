@@ -1,93 +1,57 @@
 # JME Crypto Example
 
-## Installing / Getting started
+This example project show how to use the [jeap-deploymentlog-service](https://github.com/jeap-admin-ch/jeap-crypto) library.
 
-## Local
+## Changes
 
-### Docker
+This library is versioned using [Semantic Versioning](http://semver.org/) and all changes are documented in
+[CHANGELOG.md](./CHANGELOG.md) following the format defined in [Keep a Changelog](http://keepachangelog.com/).
 
-Starting PostgreSQL, Minio and Vault with docker-compose up -d
+## Prerequisites
 
-### Minio
+To use this project, ensure you have the following installed:
 
-Console: [http://127.0.0.1:9001](http://127.0.0.1:9001 )
-API-Port: [http://127.0.0.1:9000](http://127.0.0.1:9000 )
+1. **Java Development Kit (JDK)**: Version 25.
+2. **Docker**: For running the required infrastructure.
 
-UserName: minioadmin
-Password: minioadmin
+**Note:** Use the provided maven wrapper to build and run the project.
 
-Needs at least one bucket named 'bucket-to-use-for-connection-check'. You can create that bucket in the console
-([http://127.0.0.1:9001](http://127.0.0.1:9001 ))
+## Getting started
 
-### Vault
+### Infrastructure
 
-Console: [http://localhost:8200/ui](http://localhost:8200/ui)
+Before the examples can be started the infrastructure has to be started using docker
 
-Token: secret
+```shell
+docker-compose -f docker/docker-compose.yml up
+```
 
-### Swagger
+### Build
 
-- [http://localhost:8080/jme-crypto-service/swagger-ui.html](http://localhost:8080/jme-crypto-service/swagger-ui.html)
+The project itself can be built with a simple
 
-## DEV (AWS)
+```shell
+./mvnw install
+```
 
-### Swagger
+### Start
 
-- [https://jme-dev.nivel.bazg.admin.ch/jme-crypto-service/swagger-ui/index.html?urls.primaryName=JME%20Crypto%20Example%20Rest%20API](https://jme-dev.nivel.bazg.admin.ch/jme-crypto-service/swagger-ui/index.html?urls.primaryName=JME%20Crypto%20Example%20Rest%20API)
+Then the project can be started using
 
-### S3 Bucket
+```shell
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
 
-- [https://eu-central-2.console.aws.amazon.com/s3/buckets/bit-jme-crypto-service-nivel-dev?region=eu-central-2&bucketType=general&tab=objects](https://eu-central-2.console.aws.amazon.com/s3/buckets/bit-jme-crypto-service-nivel-dev?region=eu-central-2&bucketType=general&tab=objects)
+## Profiles
 
-### KMS Key
+* **application-local:** Contains all configurations for running the application locally.
+* **application-local-disable-encryption:** Contains all configurations for running the application locally without encryption.
 
-- [https://eu-central-2.console.aws.amazon.com/kms/home?region=eu-central-2#/kms/keys/64a6f716-2a16-4cd5-b5fd-24e57fdc0b26](https://eu-central-2.console.aws.amazon.com/kms/home?region=eu-central-2#/kms/keys/64a6f716-2a16-4cd5-b5fd-24e57fdc0b26)
+## Note
 
-## Escrow Decryption
+This repository is part of the open source distribution of JME. See [github.com/jme-admin-ch/jme](https://github.com/jme-admin-ch/jme)
+for more information.
 
-The [API](https://dev-jme-internal.bit.admin.ch/jme-crypto-service/swagger-ui) contains an endpoint that demonstrates
-escrow decryption. To use it, provide the private key of the escrow key as request body, and a jEAP crypto container
-encrypted using AWS KMS as the input. The escrow decryption will then
-be applied using the escrow key, and the plaintext will be returned.
+## License
 
-## DEV (AWS with on prem Vault)
-
-### Swagger
-
-- [https://jme-dev.nivel.bazg.admin.ch/jme-crypto-vault-service/swagger-ui/index.html?urls.primaryName=JME%20Crypto%20Example%20Rest%20API](https://jme-dev.nivel.bazg.admin.ch/jme-crypto-service/swagger-ui/index.html?urls.primaryName=JME%20Crypto%20Example%20Rest%20API)
-
-### S3 Bucket
-
-- [https://eu-central-2.console.aws.amazon.com/s3/buckets/bit-jme-crypto-vault-service-nivel-dev?region=eu-central-2&bucketType=general&tab=objects](https://eu-central-2.console.aws.amazon.com/s3/buckets/bit-jme-crypto-service-nivel-dev?region=eu-central-2&bucketType=general&tab=objects)
-
-## DEV (RHOS)
-
-### Swagger
-
-- [https://bit-jme-d.apps.p-szb-ros-shrd-npr-01.cloud.admin.ch/jme-crypto-service/swagger-ui.html](https://bit-jme-d.apps.p-szb-ros-shrd-npr-01.cloud.admin.ch/jme-crypto-service/swagger-ui.html)
-
-### Notes to MAV
-We are using the MAV in this example, on MAV there can only be one service account that is authorized to access the MAV, so we take the default
-MAV is the Managed Vault on RHOS.
-The default service account exist in every namespace, normally we use dedicated service accounts for each microservice.
-
-## Maven Profiles
-
-Since this example is deployed twice on AWS with different configurations, there are two Maven profiles.
-One for the implementation on AWS with the on-prem Vault and one for the KMS/other platforms.
-The KMS profile (`non-aws-vault`) is the default profile and is used when the `aws-vault` profile is NOT specified.
-The `aws-vault` is used when the Vault profile it is specified by the Spring active profiles.
-
-Depending on the active Maven profile, the values for 'topic' and 'appName' in the annotations are adjusted for the
-message contracts.
-This is necessary because only one message contract per event can exist for each encryption key.
-The maven-antrun-plugin is used to modify the source code files before compilation.
-
-So for the `aws-vault` profile, a different topic and app name are set compared to the default example configuration.
-Additionally, the profiles differ in which ECR they are pushed to on AWS.
-
-## Documentation
-
-Check the [jEAP Blueprint Microservice](https://confluence.bit.admin.ch/display/JEAP/Blueprint+Microservices) for
-further documentation
-
+This repository is Open Source Software licensed under the [Apache License 2.0](./LICENSE).

@@ -5,8 +5,8 @@ spring:
   config:
     import: classpath:crypto-vault-config.yml
   datasource:
-    url: "jdbc:postgresql://localhost:5432/db-local"
-    username: admin
+    url: "jdbc:postgresql://localhost:5432/jme-crypto-db-local"
+    username: postgres
     password: secret
 
 jme:
@@ -14,13 +14,13 @@ jme:
     objectstorage:
       connection:
         access-url: http://localhost:9000
-        access-key: minioadmin
-        secret-key: minioadmin
+        access-key: local
+        secret-key: localsecret
 jeap:
   messaging:
     kafka:
-      bootstrapServers: "http://localhost:9092"
-      schemaRegistryUrl: "http://localhost:7781"
+      bootstrapServers: "http://localhost:10000"
+      schemaRegistryUrl: "http://localhost:11000"
       username: user
       password: user-secret
       securityProtocol: SASL_PLAINTEXT

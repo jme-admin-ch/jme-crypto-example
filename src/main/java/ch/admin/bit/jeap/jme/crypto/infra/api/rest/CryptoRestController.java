@@ -4,8 +4,8 @@ import ch.admin.bit.jeap.crypto.api.KeyReference;
 import ch.admin.bit.jeap.crypto.api.KeyReferenceCryptoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,13 +22,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @RestController
 @RequestMapping("/api/crypto")
 @Slf4j
+@RequiredArgsConstructor
 public class CryptoRestController {
 
     @Value("${jme.crypto.test.keylocation}")
     private String keyLocation;
 
-    @Autowired
-    private KeyReferenceCryptoService keyReferenceCryptoService;
+    private final KeyReferenceCryptoService keyReferenceCryptoService;
 
     @Operation(summary = "Encrypt and return the Ciphertext as Base64-Encoded String. Copy that.")
     @PutMapping("/encrypt")

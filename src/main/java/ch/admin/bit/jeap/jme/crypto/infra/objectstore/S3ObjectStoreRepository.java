@@ -6,9 +6,7 @@ import ch.admin.bit.jeap.crypto.s3.JeapDecryptedS3Object;
 import ch.admin.bit.jeap.jme.crypto.core.GameReview;
 import ch.admin.bit.jeap.jme.crypto.core.GameReviewRepository;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -19,14 +17,9 @@ import software.amazon.awssdk.auth.signer.AwsS3V4Signer;
 import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.core.client.config.SdkAdvancedClientOption;
 import software.amazon.awssdk.core.exception.SdkClientException;
-import software.amazon.awssdk.http.urlconnection.ProxyConfiguration;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
-import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.net.URI;
 import java.util.Map;
@@ -36,7 +29,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @Repository
-@RequiredArgsConstructor
 public class S3ObjectStoreRepository implements GameReviewRepository {
 
     private static final String METADATA_KEY_AUTHOR = "author";
@@ -64,10 +56,12 @@ public class S3ObjectStoreRepository implements GameReviewRepository {
      * <p>
      * Inject this bean with @Qualifier (or by Name) and you can encrypt/decrypt in the client.
      */
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Qualifier("gameReviewObjectStoreCryptoService")
-    @Autowired
-    private CryptoService cryptoService;
+    private final CryptoService cryptoService;
+
+    public S3ObjectStoreRepository(@Qualifier("gameReviewObjectStoreCryptoService") CryptoService cryptoService, S3ObjectStorageConnectionProperties connectionProperties) {
+        this.cryptoService = cryptoService;
+        this.connectionProperties = connectionProperties;
+    }
 
     /**
      * Initializing the S3-Client with connection properties
@@ -89,10 +83,9 @@ public class S3ObjectStoreRepository implements GameReviewRepository {
                     .forcePathStyle(true)
                     .credentialsProvider(credentialsProvider)
                     .httpClient(UrlConnectionHttpClient.builder()
-                            .proxyConfiguration(ProxyConfiguration.builder()
+                            .proxyConfiguration(c -> c
                                     .useSystemPropertyValues(false)
-                                    .useEnvironmentVariablesValues(false)
-                                    .build())
+                                    .useEnvironmentVariablesValues(false))
                             .build())
                     .overrideConfiguration(overrideConfig.build())
                     .build();
@@ -115,7 +108,7 @@ public class S3ObjectStoreRepository implements GameReviewRepository {
 
     private AwsCredentialsProvider createCredentialsProvider() {
         if (connectionProperties.getAccessKey() == null) {
-            return DefaultCredentialsProvider.create();
+            return DefaultCredentialsProvider.builder().build();
         }
         return StaticCredentialsProvider
                 .create(AwsBasicCredentials.create(connectionProperties.getAccessKey(), connectionProperties.getSecretKey()));
@@ -202,7 +195,7 @@ public class S3ObjectStoreRepository implements GameReviewRepository {
         try {
             s3Client.headObject(HeadObjectRequest.builder().bucket(bucket).key(keyName).build());
             return true;
-        } catch (NoSuchKeyException e) {
+        } catch (NoSuchKeyException _) {
             return false;
         }
     }
@@ -211,7 +204,7 @@ public class S3ObjectStoreRepository implements GameReviewRepository {
         try {
             s3Client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
             return true;
-        } catch (NoSuchBucketException e) {
+        } catch (NoSuchBucketException _) {
             return false;
         }
     }
