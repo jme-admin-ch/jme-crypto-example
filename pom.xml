@@ -40,6 +40,7 @@
     <properties>
         <jme-spring-boot-integration-test.version>5.4.0</jme-spring-boot-integration-test.version>
         <jme-game-review-created-event.version>1.0.0</jme-game-review-created-event.version>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
     </properties>
 
 
