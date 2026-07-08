@@ -1,0 +1,60 @@
+server:
+  servlet:
+    context-path: /${spring.application.name}
+  port: 8080
+  error:
+    include-stacktrace: always
+
+management:
+  server:
+    ssl:
+      enabled: false
+
+jeap:
+  vault:
+    system-name: jme
+  web:
+    tls:
+      enabled: false
+  swagger:
+    status: OPEN
+  monitor:
+    prometheus:
+      password: "{noop}secret"
+  crypto:
+    db:
+      key-id: "gameDatabase"
+  messaging:
+    kafka:
+      errorTopicName: jme-messageprocessing-failed
+      systemName: JME
+      serviceName: ${spring.application.name}
+
+# Persistence
+spring:
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        default_schema: data
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      schema: ${spring.jpa.properties.hibernate.default_schema}
+  flyway:
+    locations: classpath:db/migration
+    # Flyway creates automatically the default schema if not exists
+    default-schema: ${spring.jpa.properties.hibernate.default_schema}
+
+  application:
+    name: jme-crypto-service
+
+database-migration:
+  init-container: false
+  startup-migrate-mode-enabled: true
+
+jme:
+  crypto:
+    messaging:
+      game-review-created-topic-name: jme-crypto-game-review-created

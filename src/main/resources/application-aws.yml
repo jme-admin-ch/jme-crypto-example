@@ -1,0 +1,97 @@
+spring:
+  config:
+    import:
+      - "jeap-app-config-aws:"
+  cloud:
+    vault:
+      enabled: false
+
+management:
+  server:
+    base-path: ${server.servlet.context-path}
+    port: 52873
+    ssl:
+      enabled: false
+
+jeap:
+  crypto:
+    awskms:
+      default-escrow-key:
+        key-type: RSA_4096
+        # This is the public part of an RSA-4096 key named "jme-crypto-escrow-key" created in the JME vault
+        public-key: |
+          -----BEGIN PUBLIC KEY-----
+          MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAzai8s/gSFMZE8SCdecjy
+          Op2TeQCuVwSuw3Zm7DmG7dcvMO6Z2Pao5Q1B6gXRG4HdxUDJPJbzEpAWuv+aa1Gx
+          i5AnJT/rlO2SWsABKX/SdhR2YnbjwKBR4ZsbjQeBMQQvow2kD522NBCzyJkQn8pi
+          AWqGVurtl0fPjBXZEPbmKV0p88NGr4/ECPT2tB9rkQe7rms9Vjzcvh116m2d1mi/
+          jKLfnl1NzPQRGINVqE+WqHF5C2TUHYzzU1HNuL0iG35eX81spP/V29AYIhniJEnE
+          QGTzJoscve6xTZDZJxQy3iD+38z9059/BqYJetoxGSNNuv/PC+2ia5PRdotDwoNs
+          H5DAabxYA3LsRA9gg/dGFiCPzMWMHizU9rXnhR38rGgwqWgPCBbJvRuxD98A2wF6
+          LCMRcSWxEmC19UQqrVZ56pRsjNEzMNZOpfonaCi2rhrT8bRUkCZ8awK9WyoDyNni
+          NMScy9xl1o/EhdFaFUgs/fJLNk6mpZTc/fFisOrohn2dDz1PFWbV2/Q/t/4tnKzW
+          pyFYNI2Bw8KtrlLmE4Hu/ba9mCLcQPIx93yPv+9LMD/+0NMpwA8liS5jIdGxlvX5
+          960PXs8wtSY4XQXQ62GS4VBEYKlAUzdBDv+S63kyn8gnbFc4SdEH8NViMn+myp0J
+          NztHRkUCD6knZbN7wMDxFcUCAwEAAQ==
+          -----END PUBLIC KEY-----
+      keys:
+        gameReviewObjectStore:
+          key-arn: "arn:aws:kms:eu-central-2:654654230768:alias/nivel-account-kms-key"
+        gameDatabase:
+          key-arn: "arn:aws:kms:eu-central-2:654654230768:alias/nivel-account-kms-key"
+        gameReviewMessaging:
+          key-arn: "arn:aws:kms:eu-central-2:654654230768:alias/nivel-account-kms-key"
+
+  logging.platform: cloudwatch
+  web:
+    tls:
+      enabled: true
+  monitor:
+    prometheus:
+      secure: false
+  postgresql:
+    aws:
+      enabled: true
+  ###
+  # Note: In a real environment, it is recommended to get the Kafka configuration properties from AWS AppConfig.
+  # The properties are shown here only to provide a complete example.
+  # All Kafka properties below are system-wide configuration entries. The service-specific authorization happens
+  # via the IAM role assigned to the ECS task, and does not need any specific configuration entries.
+  ###
+  messaging:
+    kafka:
+      systemName: jme
+      cluster:
+        awsMskBazg:
+          defaultCluster: true
+          bootstrapServers: ${aws.services.kafka.bootstrapServers}
+          aws:
+            glue:
+              registryName: ${aws.services.glue.registryName}
+              region: "${aws.services.glue.region}"
+              assume-iam-role-arn: "${aws.services.glue.roleArn}"
+            msk:
+              iamAuthEnabled: true
+              region: "${AWS_REGION}"
+              assume-iam-role-arn: "${aws.services.kafka.roleArn}"
+
+  datasource:
+    hikari:
+      # The default RDS IAM authentication token lifetime is 15 minutes, so configure the Hikari DataSource max-lifetime a bit lower to prevent using an invalidated authentication token.
+      max-lifetime: 840000
+      schema: data
+    replica:
+      hikari:
+        # The default RDS IAM authentication token lifetime is 15 minutes, so configure the Hikari DataSource max-lifetime a bit lower to prevent using an invalidated authentication token.
+        max-lifetime: 840000
+        schema: data
+
+jme:
+  crypto:
+    objectstorage:
+      connection:
+        check-connection-on-startup-required: true
+        region: eu-central-2
+        bucket-name: bit-jme-crypto-service-nivel-dev
+    test:
+      keylocation: ${jeap.crypto.awskms.keys.gameDatabase.key-arn}

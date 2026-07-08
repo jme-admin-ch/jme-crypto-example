@@ -1,0 +1,33 @@
+jeap:
+  vault:
+    # Vault server URL for the dev environment
+    url: https://mav.bit.admin.ch
+    kv:
+      backend: bit-jme-d
+    kubernetes:
+      role: bit-jme-d-default
+      kubernetes-path: p-szb-ros-shrd-npr-01
+  crypto:
+    vault:
+      default-secret-engine-path: "bit-jme-d-transit"
+      default-encryption-key-cache-expiry-duration: 1h # Default applies if not set
+      default-decryption-key-cache-expiry-duration: 6h # Default applies if not set
+      encryption-key-max-cache-size: 100 # Default applies if not set
+      decryption-key-max-cache-size: 50000 # Default applies if not set
+      keys:
+        gameReviewObjectStore:
+          key-name: "jme-crypto-example-s3-key"
+          encryption-cache-expiry-duration: 10m # default-encryption-key-cache-expiry-duration applies if not set
+          decryption-cache-expiry-duration: 12h # default-decryption-key-cache-expiry-duration applies if not set
+        gameDatabase:
+          # You can also specify a path for each CryptoService. Here it wouldn't be necessary. For demo purposes only
+          secret-engine-path: "bit-jme-d-transit"
+          key-name: "jme-crypto-example-database-key"
+        gameReviewMessaging:
+          key-name: "jme-crypto-example-messaging-key"
+    awskms:
+      enabled: false
+jme:
+  crypto:
+    test:
+      keylocation: "v:bit-jme-d-transit:jme-crypto-example-database-key"

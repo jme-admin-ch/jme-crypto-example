@@ -1,0 +1,35 @@
+spring:
+  cloud:
+    vault:
+      enabled: false
+  config:
+    import: classpath:crypto-vault-config.yml
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/db-local"
+    username: admin
+    password: secret
+
+jme:
+  crypto:
+    objectstorage:
+      connection:
+        access-url: http://localhost:9000
+        access-key: minioadmin
+        secret-key: minioadmin
+jeap:
+  messaging:
+    kafka:
+      bootstrapServers: "http://localhost:9092"
+      schemaRegistryUrl: "http://localhost:7781"
+      username: user
+      password: user-secret
+      securityProtocol: SASL_PLAINTEXT
+      set-compatibility-mode-none: true
+  vault:
+    url: http://localhost:8200
+    authentication: TOKEN
+    app-role:
+      role-id: dummy
+      secret-id: dummy
+  crypto:
+    disabledForTestEnv: true

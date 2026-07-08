@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.admin.bit.jeap</groupId>
+        <artifactId>jeap-spring-boot-parent</artifactId>
+        <version>36.3.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>ch.admin.bit.jeap</groupId> <!-- GroupId is necessary for RHOS sca-check-->
+    <artifactId>jme-crypto-example</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <ecr-repo-name>jme-crypto-service</ecr-repo-name>
+        <ecr-repo-name-aws-vault-example>jme-crypto-vault-service</ecr-repo-name-aws-vault-example>
+    </properties>
+
+    <dependencies>
+        <!-- jEAP -->
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-crypto-vault-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-crypto-aws-kms-starter</artifactId>
+        </dependency>
+
+        <!-- DB Migration Starter only for RHOS-->
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-spring-boot-db-migration-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-spring-boot-swagger-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-spring-boot-monitoring-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-spring-boot-vault-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-spring-boot-config-aws-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-spring-boot-postgresql-aws-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-messaging-infrastructure-kafka</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-crypto-db</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-spring-boot-tls-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.admin.bit.jme.messagetype.jme</groupId>
+            <artifactId>jme-game-review-created-event</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Persistence -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- S3 Object Storage -->
+        <dependency>
+            <groupId>ch.admin.bit.jeap</groupId>
+            <artifactId>jeap-crypto-s3</artifactId>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!--
+    Since this example is deployed twice on AWS with different configurations, there are two Maven profiles.
+    One for the implementation on AWS with the on-prem Vault (aws-vault) and one for the KMS/other platforms (non-aws-vault).
+    Depending on the active Maven profile, the values for 'topic' and 'appName' in the annotations for the message contracts are adjusted.
+    This is necessary because only one message contract per event can exist for each encryption key.
+    Therefore, the maven-antrun-plugin is used to modify the source code files before compilation.
+    -->
+    <profiles>
+        <profile>
+            <id>aws-vault</id>
+            <activation>
+                <property>
+                    <name>spring.profiles.active</name>
+                    <value>aws-vault</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>push-aws-vault-example-to-registry</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <configuration>
+                                    <container>
+                                        <jvmFlags>
+                                            <jvmFlag>-Duser.timezone=Europe/Zurich</jvmFlag>
+                                            <jvmFlag>-Dfile.encoding=UTF-8</jvmFlag>
+                                        </jvmFlags>
+                                    </container>
+                                    <extraDirectories>
+                                        <paths>
+                                            <path>
+                                                <from>target/classes</from>
+                                                <into>/truststore</into>
+                                                <includes>*.jks</includes>
+                                            </path>
+                                        </paths>
+                                    </extraDirectories>
+                                    <from>
+                                        <image>amazoncorretto:25-al2023-headless</image>
+                                    </from>
+                                    <to>
+                                        <image>
+                                            654654230768.dkr.ecr.eu-central-2.amazonaws.com/${ecr-repo-name-aws-vault-example}:${project.version}
+                                        </image>
+                                        <credHelper>ecr-login</credHelper>
+                                    </to>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <replace
+                                                file="src/main/java/ch/admin/bit/jeap/jme/crypto/infra/messaging/KafkaGameReviewPublisher.java"
+                                                token="&quot;jme-crypto-game-review-created&quot;"
+                                                value="&quot;jme-crypto-vault-game-review-created&quot;"/>
+                                        <replace
+                                                file="src/main/java/ch/admin/bit/jeap/jme/crypto/infra/messaging/KafkaGameReviewPublisher.java"
+                                                token="&quot;jme-crypto-service&quot;"
+                                                value="&quot;jme-crypto-vault-service&quot;"/>
+                                        <replace
+                                                file="src/main/java/ch/admin/bit/jeap/jme/crypto/infra/messaging/KafkaGameReviewConsumer.java"
+                                                token="&quot;jme-crypto-game-review-created&quot;"
+                                                value="&quot;jme-crypto-vault-game-review-created&quot;"/>
+                                        <replace
+                                                file="src/main/java/ch/admin/bit/jeap/jme/crypto/infra/messaging/KafkaGameReviewConsumer.java"
+                                                token="&quot;jme-crypto-service&quot;"
+                                                value="&quot;jme-crypto-vault-service&quot;"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>non-aws-vault</id>
+            <activation>
+                <property>
+                    <name>spring.profiles.active</name>
+                    <value>!aws-vault</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>push-to-registry</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <configuration>
+                                    <container>
+                                        <jvmFlags>
+                                            <jvmFlag>-Duser.timezone=Europe/Zurich</jvmFlag>
+                                            <jvmFlag>-Dfile.encoding=UTF-8</jvmFlag>
+                                        </jvmFlags>
+                                    </container>
+
+                                    <from>
+                                        <image>amazoncorretto:25-al2023-headless</image>
+                                    </from>
+                                    <to>
+                                        <image>
+                                            654654230768.dkr.ecr.eu-central-2.amazonaws.com/${ecr-repo-name}:${project.version}
+                                        </image>
+                                        <credHelper>ecr-login</credHelper>
+                                    </to>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <replace
+                                                file="src/main/java/ch/admin/bit/jeap/jme/crypto/infra/messaging/KafkaGameReviewPublisher.java"
+                                                token="&quot;jme-crypto-vault-game-review-created&quot;"
+                                                value="&quot;jme-crypto-game-review-created&quot;"/>
+                                        <replace
+                                                file="src/main/java/ch/admin/bit/jeap/jme/crypto/infra/messaging/KafkaGameReviewPublisher.java"
+                                                token="&quot;jme-crypto-vault-service&quot;"
+                                                value="&quot;jme-crypto-service&quot;"/>
+                                        <replace
+                                                file="src/main/java/ch/admin/bit/jeap/jme/crypto/infra/messaging/KafkaGameReviewConsumer.java"
+                                                token="&quot;jme-crypto-vault-game-review-created&quot;"
+                                                value="&quot;jme-crypto-game-review-created&quot;"/>
+                                        <replace
+                                                file="src/main/java/ch/admin/bit/jeap/jme/crypto/infra/messaging/KafkaGameReviewConsumer.java"
+                                                token="&quot;jme-crypto-vault-service&quot;"
+                                                value="&quot;jme-crypto-service&quot;"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>ch.admin.bit.jeap</groupId>
+                <artifactId>truststore-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-truststores</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <certificateRepositoryUrl>https://bitbucket.bit.admin.ch/scm/bit_jme/jme-certificates.git</certificateRepositoryUrl>
+                    <environments>
+                        <environment>dev</environment>
+                    </environments>
+                    <includes>
+                        <include>general/aws</include>
+                        <include>general/bit_extern</include>
+                        <include>general/bit_intern</include>
+                        <include>technology/kafka</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
