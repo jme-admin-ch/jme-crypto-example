@@ -70,6 +70,13 @@ jeap:
       errorTopicName: jme-messageprocessing-failed
       systemName: JME
       serviceName: ${spring.application.name}
+      # Disable message type encryption validation in the test Spring context.
+      # The test context only manages Docker Compose lifecycle and makes HTTP calls to the
+      # separately started service - it does not perform Kafka messaging itself.
+      # Without this flag, Spring's classpath*: scan finds the producer contract JSON file
+      # twice (once from target/classes and once from the packaged JAR on the Failsafe
+      # classpath), causing a duplicate-key error in KafkaCryptoConfiguration.
+      message-type-encryption-disabled: true
 
   vault:
     system-name: jme
