@@ -18,9 +18,6 @@ import java.util.concurrent.TimeoutException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-// Depending on the active Maven profile, the values for 'topic' and 'appName' in the annotations are adjusted.
-// This is necessary because only one message contract per event can exist for each encryption key.
-// The maven-antrun-plugin is used to modify the source code files before compilation.
 @JeapMessageProducerContract(value = JmeGameReviewCreatedEvent.TypeRef.class,
         encryptionKeyId = "gameReviewMessaging",
         topic = "jme-crypto-game-review-created",
