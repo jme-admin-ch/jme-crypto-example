@@ -32,9 +32,8 @@
     </parent>
 
 
-    <groupId>ch.admin.bit.jeap.jme</groupId>
     <artifactId>jme-crypto-example</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>

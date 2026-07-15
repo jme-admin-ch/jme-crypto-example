@@ -1,8 +1,8 @@
 publiccodeYmlVersion: 0.4.0
 name: jme-crypto-example
 applicationSuite: JME
-softwareVersion: 1.0.2
-releaseDate: 2026-07-10
+softwareVersion: 1.0.3
+releaseDate: 2026-07-15
 url: "https://github.com/jme-admin-ch/jme-crypto-example.git"
 landingURL: "https://github.com/jme-admin-ch/jme"
 platforms:
