@@ -116,7 +116,7 @@ services:
   ############################################
 
   vault:
-    image: hashicorp/vault:2.0.4
+    image: hashicorp/vault:2.1.0
     ports:
       - "8200:8200"
     environment:
@@ -131,7 +131,7 @@ services:
       retries: 30
 
   vault_init:
-    image: hashicorp/vault:2.0.4
+    image: hashicorp/vault:2.1.0
     depends_on:
       vault:
         condition: service_healthy
