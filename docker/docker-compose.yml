@@ -15,7 +15,7 @@ services:
   # Kafka Cluster
   ############################################
   jme-crypto-broker:
-    image: confluentinc/cp-kafka:8.3.1
+    image: confluentinc/cp-kafka:8.3.2
     hostname: jme-crypto-broker
     ports:
       - "10000:10000"
@@ -48,7 +48,7 @@ services:
       start_period: 10s
 
   jme-crypto-broker_init:
-    image: confluentinc/cp-kafka:8.3.1
+    image: confluentinc/cp-kafka:8.3.2
     depends_on:
       jme-crypto-broker:
         condition: service_healthy
@@ -58,7 +58,7 @@ services:
       - kafka-configs --bootstrap-server jme-crypto-broker:9092 --alter --add-config 'SCRAM-SHA-512=[password=user-secret]' --entity-type users --entity-name user
 
   jme-crypto-schema-registry:
-    image: confluentinc/cp-schema-registry:8.3.1
+    image: confluentinc/cp-schema-registry:8.3.2
     depends_on:
       jme-crypto-broker:
         condition: service_healthy
@@ -116,7 +116,7 @@ services:
   ############################################
 
   vault:
-    image: hashicorp/vault:2.1.0
+    image: hashicorp/vault:2.1.1
     ports:
       - "8200:8200"
     environment:
@@ -131,7 +131,7 @@ services:
       retries: 30
 
   vault_init:
-    image: hashicorp/vault:2.1.0
+    image: hashicorp/vault:2.1.1
     depends_on:
       vault:
         condition: service_healthy
