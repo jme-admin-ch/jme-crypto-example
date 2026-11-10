@@ -58,7 +58,7 @@ services:
       - kafka-configs --bootstrap-server jme-crypto-broker:9092 --alter --add-config 'SCRAM-SHA-512=[password=user-secret]' --entity-type users --entity-name user
 
   jme-crypto-schema-registry:
-    image: confluentinc/cp-schema-registry:8.4.0
+    image: confluentinc/cp-schema-registry:8.4.1
     depends_on:
       jme-crypto-broker:
         condition: service_healthy
